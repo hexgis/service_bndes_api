@@ -1,0 +1,10 @@
+
+*.pyc
+*.sqlite3
+*.coverage
+*.env
+media/*
+htmlcov/*
+test_media/*
+
+.vscode

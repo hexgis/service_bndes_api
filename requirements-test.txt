@@ -1,0 +1,5 @@
+-r requirements.txt
+
+pytest==6.2.1
+pytest-django==4.1.0
+model-mommy~=1.5.1

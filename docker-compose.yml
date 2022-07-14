@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  db:
+    image: circleci/postgres:12-postgis
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_DB: testdatabase
+      POSTGRES_PASSWORD: testpassword
+
+  dev:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-dev
+    command: >
+      bash -c "export
+      && python manage.py makemigrations --no-input
+      && python manage.py migrate --no-input
+      && python manage.py runserver 0.0.0.0:8080"
+    volumes:
+      - .:/app/
+    ports:
+      - "8080:8080"
+    environment:
+      SECRET_KEY: django-insecure-ayhd#56df)h5(bfk&v$pi2*rt^0auoi#6+pw089hloi^qvzd2+
+      DB_USER: testuser
+      DB_NAME: testdatabase
+      DB_PASSWORD: testpassword
+      DB_HOST: db
+      BNDES_URL: ''
+      BNDES_TOKEN: 'secret'
+      BNDES_ID: 'client id'
+      BNDES_ACCEPTABLE_HTTP_CODES: '[]'
+      BNDES_CATEGORY_JSON: '{}'
+      BNDES_URL_VALIDITY: '15'
+      ALLOWED_HOSTS: '["*"]'
+      PORT: 8080
+    depends_on:
+      - db
