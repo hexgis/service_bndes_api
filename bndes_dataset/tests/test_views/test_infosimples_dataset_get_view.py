@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from bndes_dataset.tests import recipes
-from bndes_dataset import bndes_requests, models
+from bndes_dataset import models
 
 
 class TestBNDESDatasetGetView(TestCase):
