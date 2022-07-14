@@ -1,5 +1,7 @@
 import aiohttp
 import asyncio
+import requests
+
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -25,9 +27,6 @@ class BNDES:
         """
 
         params = request.data
-
-        params["token"] = settings.BNDES_TOKEN
-        params["id"] = settings.BNDES_ID
 
         urls = BNDES.get_possible_urls(params)
 
@@ -58,8 +57,10 @@ class BNDES:
         """
 
         urls = []
-        if params.get("cpf") or params.get("cnpj"):
-            params["id"] = ''
+        if params.get("cpf"):
+            params["id"] = params.get("cpf")
+        elif params.get("cnpj"):
+            params["id"] = params.get("cnpj")
 
         for bndes_url in models.BNDESUrl.objects.all():
             if not bndes_url.tags.exclude(
@@ -90,7 +91,6 @@ class BNDES:
         urls_response = []
         for url in urls:
             bndes_log = models.BNDESLog.objects.filter(
-                response__header__service=url.service,
                 params=params,
                 date_created__gt=(
                     datetime.now() - timedelta(url.validity_in_days)
@@ -98,8 +98,7 @@ class BNDES:
             ).last()
             if bndes_log:
                 response.append(bndes_log.response)
-            else:
-                urls_response.append(url.url)
+        urls_response.append(url.url)
 
         return response, urls_response
 
