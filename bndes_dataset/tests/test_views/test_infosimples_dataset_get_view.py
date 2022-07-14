@@ -11,7 +11,7 @@ from bndes_dataset import models
 
 
 class TestBNDESDatasetGetView(TestCase):
-    """Test case for UserSettings views."""
+    """Test case for BNDESDataset views."""
 
     def setUp(self):
         """Set up data for tests, created BNDES tag and url."""

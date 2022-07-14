@@ -11,19 +11,19 @@ from bndes_dataset import models, serializers
 
 class BNDES:
 
-    response = []
+    response = None
 
     @staticmethod
     def get_bndes_data(request):
         """Get all BNDES information avaliable
         with requested data from defined environment
-        variables
+        variables.
 
         Args:
-            request (HTTP request): HTTP request
+            request (HTTP request): HTTP request.
 
         Returns:
-            response (list): list of every response made
+            response (dict): BNDES requested response.
         """
 
         params = request.data
@@ -42,20 +42,21 @@ class BNDES:
                     url_pk
                 )
 
-        response = response + BNDES.response
-        BNDES.response = []
+        if BNDES.response:
+            response = BNDES.response
+            BNDES.response = None
 
         return response
 
     @classmethod
     def get_url(cls, params):
-        """Method for getting possible urls with given parameters.
+        """Method for get url with given parameters.
 
         Args:
             params (JSON): user request params.
 
         Returns:
-            (list): List of filtered BNDESUrl.
+            (dict): Filtered BNDESUrl.
         """
 
         if params.get("cpf"):
@@ -79,16 +80,15 @@ class BNDES:
         showing the url that needs to be requested on bndes.
 
         Args:
-            urls (list): BNDES.get_possible_urls method results.
+            url (dict): BNDES.get_url method result.
             params (JSON): User request params.
 
         Returns:
-            response (list): List of possible BNDESLog with given
-            params.
-            url_response (list): List of BNDESUrl url for requesting.
+            response (dict): BNDESLog of given params.
+            url_response (str): BNDESUrl url for requesting.
         """
 
-        response = []
+        response = None
         url_response = None
         bndes_log = models.BNDESLog.objects.filter(
             params=params,
@@ -98,7 +98,7 @@ class BNDES:
         ).last()
 
         if bndes_log:
-            response.append(bndes_log.response)
+            response = bndes_log.response
         else:
             url_response = url.url + params.get("id")
 
@@ -106,15 +106,12 @@ class BNDES:
 
     @classmethod
     def get_request(cls, url):
-        """ Method to post request calls asynchronously
-        using aioHTTP session.
+        """ Method to send request to given url
+        and store in BNDES.response global variable.
 
         Args:
-            urls (list): list of BNDES endpoints urls.
-            params (JSON): user request params.
+            urls (str): BNDES endpoint url.
 
-        Returns:
-            response_json (JSON): BNDES result for instance params.
         """
 
         response = requests.get(url).json()
@@ -127,11 +124,12 @@ class BNDES:
 
     @classmethod
     def store_bndes_response(cls, response, params, url_pk):
-        """Method for storing bndes responses in BNDESLog model.
+        """Method for storing BNDES responses in BNDESLog model.
 
         Args:
-            response_list (list): BNDES responses.
+            response (dict): BNDES response.
             params (dict): User requested params.
+            url_pk (int): BNDESUrl pk.
         """
 
         serializer_data = {}
