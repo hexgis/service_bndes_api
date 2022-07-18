@@ -1,0 +1,13 @@
+- model: auth.user
+  pk: 1
+  fields:
+    password: pbkdf2_sha256$150000$faoDqxQF8jwY$0A1618nZ8Zg6u7JiRy6hG6wRzrg8ucvI7mKcUoB2+vo=
+    last_login: null
+    is_superuser: true
+    username: root
+    first_name: ""
+    last_name: ""
+    email: root@hexgis.com
+    is_staff: true
+    is_active: true
+    date_joined: 2019-12-19 21:43:16.265931+00:00

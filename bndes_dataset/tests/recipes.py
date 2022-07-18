@@ -18,8 +18,8 @@ class BNDESDatasetRecipes:
 
         self.url = Recipe(
             models.BNDESUrl,
-            url='https://api.bndes.com/api/v2/consultas/mpf/amazonia-protege',
-            service='mpf/amazonia-protege',
+            url='https://apis-gateway.bndes.gov.br/transparencia/v2/cliente/',
+            service='clientes',
             tags=foreign_key(self.tag),
         )
 

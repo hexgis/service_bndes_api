@@ -2,7 +2,9 @@ from django.http import JsonResponse
 
 from rest_framework import (
     generics,
-    permissions
+    permissions,
+    response,
+    status
 )
 
 from bndes_dataset.bndes_requests import BNDES
@@ -36,5 +38,11 @@ class BNDESDatasetGetView(AuthModelMixIn, generics.GenericAPIView):
             ReturnDict: BNDES serialized results
         """
 
-        response = BNDES.get_bndes_data(request)
-        return JsonResponse(response, safe=False)
+        bndes_response = BNDES.get_bndes_data(request)
+        if bndes_response:
+            return JsonResponse(bndes_response, safe=False)
+        else:
+            return response.Response(
+                f'Error while trying to retrieve data from: {request.data}',
+                status.HTTP_404_NOT_FOUND
+            )

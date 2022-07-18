@@ -7,11 +7,11 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from bndes_dataset.tests import recipes
-from bndes_dataset import bndes_requests, models
+from bndes_dataset import models
 
 
 class TestBNDESDatasetGetView(TestCase):
-    """Test case for UserSettings views."""
+    """Test case for BNDESDataset views."""
 
     def setUp(self):
         """Set up data for tests, created BNDES tag and url."""
@@ -21,42 +21,6 @@ class TestBNDESDatasetGetView(TestCase):
         self.url = self.recipes.url.make(tags=[self.tag])
 
         self.mock_data_json = {"cpf": "00000000000"}
-        self.mock_response_json = [
-            {
-                "code": 200,
-                "code_message": "A requisição foi processada com sucesso.",
-                "header": {
-                    "api_version": "v2",
-                    "service": "mpf/amazonia-protege",
-                    "parameters": {
-                        "cnpj": "11111111111111"
-                    },
-                    "client_name": "Minha Empresa",
-                    "token_name": "Token de Produção",
-                    "billable": True,
-                    "price": "0.2",
-                    "requested_at": "2021-07-07T08:30:50.000-03:00",
-                    "elapsed_time_in_milliseconds": 1854,
-                    "remote_ip": "111.111.111.111",
-                    "signature": "1czezi3b9UQYcm3VmbDoMIxGyQUH5vQ=="
-                },
-                "data_count": 1,
-                "data": [
-                    {
-                        "certidao_codigo": "11111111111111111",
-                        "conseguiu_emitir_certidao_negativa": False,
-                        "emissao_data": "11/11/1111",
-                        "mensagem": "Exemplo de texto",
-                        "validade_data": "11/11/1111",
-                        "site_receipt": "https://www.exemplo.com/exemplo-de-url"
-                    }
-                ],
-                "errors": [],
-                "site_receipts": [
-                    "https://www.exemplo.com/exemplo-de-url"
-                ]
-            },
-        ]
 
         self.assertEqual(models.BNDESTag.objects.count(), 1)
         self.assertEqual(models.BNDESUrl.objects.count(), 1)

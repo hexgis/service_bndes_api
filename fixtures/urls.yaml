@@ -1,0 +1,19 @@
+- model: bndes_dataset.bndestag
+  pk: 1
+  fields:
+    tag: id
+- model: bndes_dataset.bndestag
+  pk: 2
+  fields:
+    tag: cpf
+- model: bndes_dataset.bndestag
+  pk: 3
+  fields:
+    tag: cnpj
+- model: bndes_dataset.bndesurl
+  pk: 1
+  fields:
+    service: clientes
+    url: https://apis-gateway.bndes.gov.br/transparencia/v2/cliente/
+    tags:
+      - 1
