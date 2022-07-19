@@ -1,20 +1,18 @@
-import aiohttp
-import asyncio
 import requests
+import urllib
 
 from datetime import datetime, timedelta
-
-from django.conf import settings
 
 from bndes_dataset import models, serializers
 
 
 class BNDES:
+    """BNDES request handler data from transparency API."""
 
     response = None
 
     @staticmethod
-    def get_bndes_data(request):
+    def get_bndes_data(request) -> dict:
         """Get all BNDES information avaliable
         with requested data from defined environment
         variables.
@@ -23,23 +21,19 @@ class BNDES:
             request (HTTP request): HTTP request.
 
         Returns:
-            response (dict): BNDES requested response.
+            dict: BNDES requested response.
         """
+        url = BNDES.get_url(request.data)
 
-        params = request.data
+        response, request_url = BNDES.verify_logs(url, request.data)
 
-        url = BNDES.get_url(params)
-        url_pk = url.pk
-
-        response, url = BNDES.verify_logs(url, params)
-
-        if url:
-            BNDES.get_request(url)
+        if request_url:
+            BNDES.get_request(request_url)
             if BNDES.response:
                 BNDES.store_bndes_response(
                     BNDES.response,
-                    params,
-                    url_pk
+                    request.data,
+                    url.pk
                 )
 
         if BNDES.response:
@@ -49,20 +43,20 @@ class BNDES:
         return response
 
     @classmethod
-    def get_url(cls, params):
+    def get_url(cls, params: dict) -> dict:
         """Method for get url with given parameters.
 
         Args:
-            params (JSON): user request params.
+            params (dict): user request params.
 
         Returns:
-            (dict): Filtered BNDESUrl.
+            dict: Filtered BNDESUrl.
         """
 
-        if params.get("cpf"):
-            params["id"] = params.get("cpf")
-        elif params.get("cnpj"):
-            params["id"] = params.get("cnpj")
+        if params.get('cpf'):
+            params['id'] = params.get('cpf')
+        elif params.get('cnpj'):
+            params['id'] = params.get('cnpj')
 
         for bndes_url in models.BNDESUrl.objects.all():
             if not bndes_url.tags.exclude(
@@ -75,21 +69,21 @@ class BNDES:
         return url
 
     @classmethod
-    def verify_logs(cls, url, params):
+    def verify_logs(cls, url: dict, params: dict) -> dict:
         """Method for filtering possible BNDESLog if exists, or
         showing the url that needs to be requested on bndes.
 
         Args:
             url (dict): BNDES.get_url method result.
-            params (JSON): User request params.
+            params (dict): User request params.
 
         Returns:
-            response (dict): BNDESLog of given params.
-            url_response (str): BNDESUrl url for requesting.
+            dict: BNDESLog of given params or request_url.
         """
 
         response = None
-        url_response = None
+        request_url = None
+
         bndes_log = models.BNDESLog.objects.filter(
             params=params,
             date_created__gt=(
@@ -100,30 +94,29 @@ class BNDES:
         if bndes_log:
             response = bndes_log.response
         else:
-            url_response = url.url + params.get("id")
+            request_url = urllib.parse.urljoin(url.url, params.get('id'))
 
-        return response, url_response
+        return response, request_url
 
     @classmethod
-    def get_request(cls, url):
+    def get_request(cls, url: str):
         """ Method to send request to given url
         and store in BNDES.response global variable.
 
         Args:
             urls (str): BNDES endpoint url.
-
         """
 
-        response = requests.get(url).json()
+        json_response = requests.get(url).json()
         if (
-            len(response.get("operacoes")) != 0 or
-            len(response.get("desembolsos")) != 0 or
-            len(response.get("carteira")) != 0
+            len(json_response.get('operacoes')) != 0 or
+            len(json_response.get('desembolsos')) != 0 or
+            len(json_response.get('carteira')) != 0
         ):
-            BNDES.response = response
+            BNDES.response = json_response
 
     @classmethod
-    def store_bndes_response(cls, response, params, url_pk):
+    def store_bndes_response(cls, response: dict, params: dict, url_pk: int):
         """Method for storing BNDES responses in BNDESLog model.
 
         Args:
@@ -133,9 +126,9 @@ class BNDES:
         """
 
         serializer_data = {}
-        serializer_data["response"] = response
-        serializer_data["params"] = params
-        serializer_data["bndes_url"] = models.BNDESUrl.objects.get(
+        serializer_data['response'] = response
+        serializer_data['params'] = params
+        serializer_data['bndes_url'] = models.BNDESUrl.objects.get(
             pk=url_pk
         ).pk
         serializer = serializers.BNDESLogSerializer(
