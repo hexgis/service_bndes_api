@@ -75,4 +75,4 @@ substitutions:
   _GCR_HOSTNAME: us.gcr.io
   _SERVICE_NAME: service-agribusiness-bndes
   _SECRETS_NAME: agribusiness-microservice-bndes
-  _DJANGO_SETTINGS_NAME: skyviewer_api.settings.production
+  _DJANGO_SETTINGS_NAME: service_bndes_api.settings.production
