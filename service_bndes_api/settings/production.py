@@ -15,11 +15,6 @@ env = environ.Env(
 
 DEBUG = env('DEBUG')
 
-# Raises Django's ImproperlyConfigured
-# exception if SECRET_KEY not in os.environ
-
-SECRET_KEY = os.environ.get('SECRET_KEY')
-
 # START [CloudRun cloud config]
 # Attempt to load the Project ID into the environment,
 # safely failing on error.
@@ -50,6 +45,10 @@ else:
     )
 # END [CloudRun cloud config]
 
+# Raises Django's ImproperlyConfigured
+# exception if SECRET_KEY not in os.environ
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
