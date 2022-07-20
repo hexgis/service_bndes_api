@@ -32,23 +32,6 @@ steps:
       - "--settings"
       - "$_DJANGO_SETTINGS_NAME"
 
-  - id: Apply Initial Fixtures
-    name: gcr.io/google-appengine/exec-wrapper
-    args:
-      - "-i"
-      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
-      - "-s"
-      - "$PROJECT_ID:$_DEPLOY_REGION:$_DATABASE_INSTANCE_NAME"
-      - "-e"
-      - "SECRETS_NAME=$_SECRETS_NAME"
-      - "--"
-      - "python"
-      - "manage.py"
-      - "loaddata"
-      - "fixtures/urls.yaml"
-      - "--settings"
-      - "$_DJANGO_SETTINGS_NAME"
-
   - id: Collect static
     name: gcr.io/google-appengine/exec-wrapper
     args:
