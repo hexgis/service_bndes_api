@@ -17,7 +17,8 @@ class TestBNDESDatasetGetView(TestCase):
         self.recipes = recipes.BNDESDatasetRecipes()
 
         self.tag = self.recipes.tag.make()
-        self.url = self.recipes.url.make(tags=[self.tag])
+        self.service_url = self.recipes.url.make(tags=[self.tag])
+        self.url = reverse('bndes_dataset:search')
 
         # Due to LGPD, CPF tests is not available.
         self.mock_data_cpf_json = {"cpf": "00000000000"}
@@ -48,16 +49,15 @@ class TestBNDESDatasetGetView(TestCase):
     def test_view_exists(self):
         """Test if reverse for url asserts on real url."""
 
-        self.assertTrue(reverse('bndes_dataset:search'))
+        self.assertTrue(self.url)
 
     def test_bndes_dataset_get_view_with_invalid_cpf(self):
         """Test BNDESDataset view with invalid cpf."""
 
         client = self.get_client()
-        url_creation = reverse('bndes_dataset:search')
 
         request = client.post(
-            url_creation, self.mock_data_cpf_json, format='json'
+            self.url, self.mock_data_cpf_json, format='json'
         )
         self.assertTrue(status.is_client_error(request.status_code))
 
@@ -65,10 +65,10 @@ class TestBNDESDatasetGetView(TestCase):
         """Test BNDESDataset view with correct data."""
 
         client = self.get_client()
-        url_creation = reverse('bndes_dataset:search')
+        url = reverse('bndes_dataset:search')
 
         request = client.post(
-            url_creation, self.mock_data_cnpj_json_with_data, format='json'
+            self.url, self.mock_data_cnpj_json_with_data, format='json'
         )
         self.assertTrue(status.is_success(request.status_code))
 
@@ -76,10 +76,10 @@ class TestBNDESDatasetGetView(TestCase):
         """Test BNDESDataset view with cnpf wihthout data."""
 
         client = self.get_client()
-        url_creation = reverse('bndes_dataset:search')
+        url = reverse('bndes_dataset:search')
 
         request = client.post(
-            url_creation,
+            self.url,
             self.mock_data_cnpj_json_without_data,
             format='json'
         )
