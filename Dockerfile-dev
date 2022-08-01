@@ -42,4 +42,4 @@ RUN pip install --no-cache-dir -r requirements-test.txt
 
 # Run the web service on container startup.
 # Here we use the python manage.py webserver,
-CMD python manage.py makemigration --no-input && python manage.py migrate && python manage.py runserver 0.0.0.0:$PORT
+CMD python manage.py makemigrations --no-input && python manage.py migrate && python manage.py runserver 0.0.0.0:$PORT

@@ -12,7 +12,8 @@ from bndes_dataset.bndes_requests import BNDES
 
 class AuthModelMixIn:
     """"Authentication Model MixIn for UserProfile views.
-        Default permission_classes for permissions.IsAuthenticated.
+
+    Default permission_classes for permissions.AllowAny.
     """
 
     permission_classes = (permissions.AllowAny,)
@@ -22,7 +23,7 @@ class BNDESDatasetGetView(AuthModelMixIn, generics.GenericAPIView):
     """View to get BNDES data.
 
     Args:
-        request.data (JSON): HTTP request data
+        request (dict): HTTP request data
 
     Returns:
         dict: query results
@@ -32,13 +33,14 @@ class BNDESDatasetGetView(AuthModelMixIn, generics.GenericAPIView):
         """Get BNDES data.
 
         Args:
-            request.data (JSON): HTTP request data
+            request (dict): HTTP request data.
 
         Returns:
-            ReturnDict: BNDES serialized results
+            response.Response: BNDES serialized results.
         """
 
         bndes_response = BNDES.get_bndes_data(request)
+
         if bndes_response:
             return JsonResponse(bndes_response, safe=False)
         else:
