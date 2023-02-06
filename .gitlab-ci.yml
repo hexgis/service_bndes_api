@@ -12,7 +12,7 @@ cleanup:
     - name: docker:dind
   allow_failure: true
   script:
-    - docker system prune -a
+    - docker system prune -af
 
 
 coverage_develop:
