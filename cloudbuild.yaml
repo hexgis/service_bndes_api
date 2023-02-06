@@ -6,7 +6,7 @@ steps:
       - build
       - "--no-cache"
       - "-t"
-      - "$_GCR_HOSTNAME/hex360/service_bndes_api/$_SERVICE_NAME:$TAG_NAME"
+      - "gcr.io/xskylab-development/hex360/$_SERVICE_NAME:$TAG_NAME"
       - .
       - "-f"
       - Dockerfile
@@ -15,42 +15,42 @@ steps:
     name: gcr.io/cloud-builders/docker
     args:
       - push
-      - "$_GCR_HOSTNAME/hex360/service_bndes_api/$_SERVICE_NAME:$TAG_NAME"
+      - "gcr.io/xskylab-development/hex360/$_SERVICE_NAME:$TAG_NAME"
 
-  - id: Apply Migrations
-    name: gcr.io/google-appengine/exec-wrapper
-    args:
-      - "-i"
-      - "$_GCR_HOSTNAME/hex360/service_bndes_api/$_SERVICE_NAME:$TAG_NAME"
-      - "-s"
-      - "$PROJECT_ID:$_DEPLOY_REGION:$_DATABASE_INSTANCE_NAME"
-      - "-e"
-      - "SECRETS_NAME=$_SECRETS_NAME"
-      - "--"
-      - "python"
-      - "manage.py"
-      - "migrate"
-      - "--settings"
-      - "$_DJANGO_SETTINGS_NAME"
+#  - id: Apply Migrations
+#    name: gcr.io/google-appengine/exec-wrapper
+#    args:
+#      - "-i"
+#      - "gcr.io/xskylab-development/hex360/$_SERVICE_NAME:$TAG_NAME"
+#      - "-s"
+#      - "$PROJECT_ID:$_DEPLOY_REGION:$_DATABASE_INSTANCE_NAME"
+#      - "-e"
+#      - "SECRETS_NAME=$_SECRETS_NAME"
+#      - "--"
+#      - "python"
+#      - "manage.py"
+#      - "migrate"
+#      - "--settings"
+#      - "$_DJANGO_SETTINGS_NAME"
 
-  - id: Collect static
-    name: gcr.io/google-appengine/exec-wrapper
-    args:
-      - "-i"
-      - "$_GCR_HOSTNAME/hex360/service_bndes_api/$_SERVICE_NAME:$TAG_NAME"
-      - "-s"
-      - "$PROJECT_ID:$_DEPLOY_REGION:$_DATABASE_INSTANCE_NAME"
-      - "-e"
-      - "SECRETS_NAME=$_SECRETS_NAME"
-      - "--"
-      - "python"
-      - "manage.py"
-      - "collectstatic"
-      - "--verbosity"
-      - "2"
-      - "--no-input"
-      - "--settings"
-      - "$_DJANGO_SETTINGS_NAME"
+#  - id: Collect static
+#    name: gcr.io/google-appengine/exec-wrapper
+#    args:
+#      - "-i"
+#      - "gcr.io/xskylab-development/hex360/$_SERVICE_NAME:$TAG_NAME"
+#      - "-s"
+#      - "$PROJECT_ID:$_DEPLOY_REGION:$_DATABASE_INSTANCE_NAME"
+#      - "-e"
+#      - "SECRETS_NAME=$_SECRETS_NAME"
+#      - "--"
+#      - "python"
+#      - "manage.py"
+#      - "collectstatic"
+#      - "--verbosity"
+#      - "2"
+#      - "--no-input"
+#      - "--settings"
+#      - "$_DJANGO_SETTINGS_NAME"
 
   - id: Deploy
     name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
@@ -60,7 +60,7 @@ steps:
       - update
       - $_SERVICE_NAME
       - "--platform=managed"
-      - "--image=$_GCR_HOSTNAME/hex360/service_bndes_api/$_SERVICE_NAME:$TAG_NAME"
+      - "--image=gcr.io/xskylab-development/hex360/$_SERVICE_NAME:$TAG_NAME"
       - >-
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID
       - "--region=$_DEPLOY_REGION"
