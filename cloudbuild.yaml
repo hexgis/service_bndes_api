@@ -67,7 +67,7 @@ steps:
       - "--quiet"
     entrypoint: gcloud
 images:
-  - "$_GCR_HOSTNAME/hex360/service_bndes_api/$_SERVICE_NAME:$TAG_NAME"
+  - "gcr.io/xskylab-development/hex360/$_SERVICE_NAME:$TAG_NAME"
 options:
   substitutionOption: ALLOW_LOOSE
 substitutions:
