@@ -12,6 +12,7 @@ coverage_develop:
     - name: docker:dind
   allow_failure: true
   script:
+    - if [[ -z $CI_COMMIT_TAG ]]; then echo FALTA A TAG - favor colocar uma tag; exit 1; fi
     - echo $GOOGLE_APPLICATION_CREDENTIALS_JSON > key.json
     - apk add bash
     - bash ./generate.env.sh develop
