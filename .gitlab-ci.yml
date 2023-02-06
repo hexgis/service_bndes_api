@@ -1,20 +1,8 @@
 image: docker:latest
 
 stages:
-  - cleanup
   - test
   - deploy
-
-cleanup:
-  stage: cleanup
-  image: docker:latest
-  services:
-    - name: docker:dind
-  allow_failure: true
-  script:
-    - docker system prune -af
-    - echo $CI_COMMIT_TAG
-    - echo $CI_COMMIT_REF_NAME
 
 
 coverage_develop:
@@ -24,14 +12,16 @@ coverage_develop:
     - name: docker:dind
   allow_failure: true
   script:
-    - if [[ -z $CI_COMMIT_TAG ]]; then echo FALTA A TAG - favor colocar uma tag; exit 1; fi
     - echo $GOOGLE_APPLICATION_CREDENTIALS_JSON > key.json
     - apk add bash
     - bash ./generate.env.sh develop
     - docker-compose down
     - docker-compose up --build test
   only:
-    - develop
+    refs: 
+      - develop
+    variables: 
+      - $CI_COMMIT_TAG != null
 
 
 
