@@ -18,7 +18,8 @@ coverage_develop:
     - docker-compose down
     - docker-compose up --build test
   only:
-    - tags
+    - tags && main
+    - tags && develop
 
 
 
@@ -34,4 +35,5 @@ deploy_develop:
     - gcloud config set project xskylab-development
     - gcloud builds submit . --config=cloudbuild.yaml --substitutions=TAG_NAME=$CI_COMMIT_TAG
   only:
-    - tags
+    - tags && main
+    - tags && develop
