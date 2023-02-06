@@ -70,6 +70,7 @@ images:
   - "gcr.io/xskylab-development/hex360/$_SERVICE_NAME:$TAG_NAME"
 options:
   substitutionOption: ALLOW_LOOSE
+  logging: CLOUD_LOGGING_ONLY
 substitutions:
   _DATABASE_INSTANCE_NAME: agribusiness-agrocheck-ms-production-1
   _DEPLOY_REGION: us-central1
