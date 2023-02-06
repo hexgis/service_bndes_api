@@ -1,11 +1,13 @@
+
 steps:
+
   - id: Build
     name: gcr.io/cloud-builders/docker
     args:
       - build
       - "--no-cache"
       - "-t"
-      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$TAG_NAME"
       - .
       - "-f"
       - Dockerfile
@@ -14,13 +16,13 @@ steps:
     name: gcr.io/cloud-builders/docker
     args:
       - push
-      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$TAG_NAME"
 
   - id: Apply Migrations
     name: gcr.io/google-appengine/exec-wrapper
     args:
       - "-i"
-      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$TAG_NAME"
       - "-s"
       - "$PROJECT_ID:$_DEPLOY_REGION:$_DATABASE_INSTANCE_NAME"
       - "-e"
@@ -36,7 +38,7 @@ steps:
     name: gcr.io/google-appengine/exec-wrapper
     args:
       - "-i"
-      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+      - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$TAG_NAME"
       - "-s"
       - "$PROJECT_ID:$_DEPLOY_REGION:$_DATABASE_INSTANCE_NAME"
       - "-e"
@@ -59,14 +61,14 @@ steps:
       - update
       - $_SERVICE_NAME
       - "--platform=managed"
-      - "--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+      - "--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$TAG_NAME"
       - >-
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID
       - "--region=$_DEPLOY_REGION"
       - "--quiet"
     entrypoint: gcloud
 images:
-  - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+  - "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$TAG_NAME"
 options:
   substitutionOption: ALLOW_LOOSE
 substitutions:
