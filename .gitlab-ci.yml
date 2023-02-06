@@ -21,6 +21,9 @@ coverage_develop:
   only:
     - develop
     - tags
+  except:
+    - master
+
 
 
 
@@ -38,3 +41,5 @@ deploy_develop:
   only:
     - develop
     - tags
+  except:
+    - master
