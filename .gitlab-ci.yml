@@ -41,10 +41,11 @@ deploy_develop:
   image: google/cloud-sdk
   services:
     - docker:dind
-  rules: 
-    - if: '($CI_COMMIT_BRANCH == "develop") && $CI_COMMIT_TAG != null'
   script:
+    - if [[ -z $CI_COMMIT_TAG ]]; then echo FALTA A TAG - favor colocar uma tag; exit 1; fi
     - echo $GCP_SERVICE_KEY_DEV > gcloud-service-key.json 
     - gcloud auth activate-service-account --key-file gcloud-service-key.json
     - gcloud config set project xskylab-development
     - gcloud builds submit . --config=cloudbuild.yaml --substitutions=TAG_NAME=$CI_COMMIT_TAG
+  only:
+    - develop
