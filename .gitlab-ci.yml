@@ -14,7 +14,7 @@ cleanup:
   script:
     - docker system prune -af
     - echo $CI_COMMIT_TAG
-    - echo $CI_COMMIT_BRANCH
+    - echo $CI_COMMIT_REF_NAME
 
 
 coverage_develop:
