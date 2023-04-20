@@ -23,6 +23,7 @@ class BNDES:
         Returns:
             dict: BNDES requested response.
         """
+
         url = BNDES.get_url(request.data)
 
         response, request_url = BNDES.verify_logs(url, request.data)
@@ -69,6 +70,27 @@ class BNDES:
         return url
 
     @classmethod
+    def get_request(cls, url: str):
+        """Method to send request to given url
+        and store in BNDES.response global variable.
+
+        Args:
+            urls (str): BNDES endpoint url.
+
+        Raises:
+
+        """
+
+        json_response = requests.get(url, timeout=(5, 10)).json()
+
+        if (
+            len(json_response.get('operacoes')) != 0 or
+            len(json_response.get('desembolsos')) != 0 or
+            len(json_response.get('carteira')) != 0
+        ):
+            BNDES.response = json_response
+
+    @classmethod
     def verify_logs(cls, url: dict, params: dict) -> dict:
         """Method for filtering possible BNDESLog if exists, or
         showing the url that needs to be requested on bndes.
@@ -97,23 +119,6 @@ class BNDES:
             request_url = urllib.parse.urljoin(url.url, params.get('id'))
 
         return response, request_url
-
-    @classmethod
-    def get_request(cls, url: str):
-        """ Method to send request to given url
-        and store in BNDES.response global variable.
-
-        Args:
-            urls (str): BNDES endpoint url.
-        """
-
-        json_response = requests.get(url).json()
-        if (
-            len(json_response.get('operacoes')) != 0 or
-            len(json_response.get('desembolsos')) != 0 or
-            len(json_response.get('carteira')) != 0
-        ):
-            BNDES.response = json_response
 
     @classmethod
     def store_bndes_response(cls, response: dict, params: dict, url_pk: int):
