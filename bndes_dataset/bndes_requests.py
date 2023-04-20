@@ -29,7 +29,14 @@ class BNDES:
         response, request_url = BNDES.verify_logs(url, request.data)
 
         if request_url:
-            BNDES.get_request(request_url)
+            try:
+                BNDES.get_request(request_url)
+            except Exception as exc:
+                response.status_code = 500
+                response.data = {
+                    'error': f'Error while getting data from {url} - {exc}'
+                }
+
             if BNDES.response:
                 BNDES.store_bndes_response(
                     BNDES.response,
