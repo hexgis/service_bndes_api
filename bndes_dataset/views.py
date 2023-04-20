@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 
 from rest_framework import (
-    generics,
+    views,
     permissions,
     response,
     status
@@ -19,7 +19,7 @@ class AuthModelMixIn:
     permission_classes = (permissions.AllowAny,)
 
 
-class BNDESDatasetGetView(AuthModelMixIn, generics.GenericAPIView):
+class BNDESDatasetGetView(AuthModelMixIn, views.APIView):
     """View to get BNDES data.
 
     Args:

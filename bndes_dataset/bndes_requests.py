@@ -29,13 +29,7 @@ class BNDES:
         response, request_url = BNDES.verify_logs(url, request.data)
 
         if request_url:
-            try:
-                BNDES.get_request(request_url)
-            except Exception as exc:
-                response.status_code = 500
-                response.data = {
-                    'error': f'Error while getting data from {url} - {exc}'
-                }
+            BNDES.get_request(request_url)
 
             if BNDES.response:
                 BNDES.store_bndes_response(
@@ -83,14 +77,14 @@ class BNDES:
 
         Args:
             urls (str): BNDES endpoint url.
-
-        Raises:
-
         """
 
-        json_response = requests.get(url, timeout=(5, 10)).json()
+        try:
+            json_response = requests.get(url, timeout=(20)).json()
+        except Exception:
+            json_response = None
 
-        if (
+        if json_response and (
             len(json_response.get('operacoes')) != 0 or
             len(json_response.get('desembolsos')) != 0 or
             len(json_response.get('carteira')) != 0
